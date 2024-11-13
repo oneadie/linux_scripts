@@ -1,0 +1,32 @@
+name: Build RPM and DEB packages
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup build environment
+      run: |
+        sudo apt update
+        sudo apt install -y build-essential rpm devscripts
+
+    - name: Build RPM package
+      run: |
+        cd /home/oneadie/rpmbuild/SPECS
+        rpmbuild -ba count_files.spec
+
+    - name: Build DEB package
+      run: |
+        cd /home/oneadie/deb-package
+        dpkg-buildpackage -us -uc
